@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paystack Payment Demo</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 100px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>Pay ₦5000 via Paystack</h2>
+  <p>Enter your email to continue:</p>
+  <input type="email" id="email" placeholder="you@example.com" />
+  <br><br>
+  <button id="payBtn">Pay Now</button>
+
+  <script>
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      if (!email) return alert('Please enter your email');
+
+      const response = await fetch('/api/paystack/initialize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, amount: 500000 }) // ₦5000 in kobo
+      });
+
+      const data = await response.json();
+      if (data.status && data.data.authorization_url) {
+        window.location.href = data.data.authorization_url;
+      } else {
+        alert('Error initializing transaction: ' + JSON.stringify(data));
+      }
+    });
+  </script>
+</body>
+</html>
